@@ -1,15 +1,15 @@
 var createScene = async function () {
-     This creates a basic Babylon Scene object (non-mesh)
+    // This creates a basic Babylon Scene object (non-mesh)
     var scene = new BABYLON.Scene(engine);
     BABYLON.SceneLoader.ShowLoadingScreen = false;
 
-     create camera and lights for scene
+    // create camera and lights for scene
     const lights = {};
     const env = {};
     const camera = {};
     async function initScene() {
         scene.clearColor = new BABYLON.Color3.FromInts(238, 157, 57);
-        camera.main = new BABYLON.ArcRotateCamera(camera, BABYLON.Tools.ToRadians(70), BABYLON.Tools.ToRadians(60), 0.09, new BABYLON.Vector3(0.0, 0.0, 0.0), scene);
+        camera.main = new BABYLON.ArcRotateCamera("camera", BABYLON.Tools.ToRadians(70), BABYLON.Tools.ToRadians(60), 0.09, new BABYLON.Vector3(0.0, 0.0, 0.0), scene);
         camera.main.minZ = 0.0001;
         camera.main.wheelDeltaPercentage = 0.2;
         camera.main.upperRadiusLimit = 0.2;
@@ -19,14 +19,14 @@ var createScene = async function () {
         camera.main.panningAxis = new BABYLON.Vector3(0, 0, 0);
         camera.main.attachControl(canvas, true);
 
-        env.lighting = BABYLON.CubeTexture.CreateFromPrefilteredData(httpspatrickryanms.github.ioBabylonJStexturesDemosd20_pbrenvrunyonCanyon.env, scene);
-        env.lighting.name = runyonCanyon;
+        env.lighting = BABYLON.CubeTexture.CreateFromPrefilteredData("https://patrickryanms.github.io/BabylonJStextures/Demos/d20_pbr/env/runyonCanyon.env", scene);
+        env.lighting.name = "runyonCanyon";
         env.lighting.gammaSpace = false;
         env.lighting.rotationY = 1.9;
         scene.environmentTexture = env.lighting;
         scene.environmentIntensity = 2.0;
 
-        lights.dirLight = new BABYLON.DirectionalLight(dirLight, new BABYLON.Vector3(0.51, -1.2, -0.83), scene);
+        lights.dirLight = new BABYLON.DirectionalLight("dirLight", new BABYLON.Vector3(0.51, -1.2, -0.83), scene);
         lights.dirLight.position = new BABYLON.Vector3(-0.04, 0.057, 0.01);
         lights.dirLight.shadowMinZ = 0.01;
         lights.dirLight.shadowMaxZ = 0.15;
@@ -35,11 +35,11 @@ var createScene = async function () {
 
     const dice = {};
     async function loadMeshes() {
-        dice.file = await BABYLON.SceneLoader.AppendAsync(httpspatrickryanms.github.ioBabylonJStexturesDemosd20_pbrgltfd20_scene.gltf);
-        dice.d20_center = scene.getMeshByName(d20_basePBR_middle_low);
-        dice.ground = scene.getMeshByName(groundPlane_low);
-        scene.getMeshByName(d20_basePBR_left_low).dispose(true, true);
-        scene.getMeshByName(d20_basePBR_right_low).dispose(true, true);
+        dice.file = await BABYLON.SceneLoader.AppendAsync("https://patrickryanms.github.io/BabylonJStextures/Demos/d20_pbr/gltf/d20_scene.gltf");
+        dice.d20_center = scene.getMeshByName("d20_basePBR_middle_low");
+        dice.ground = scene.getMeshByName("groundPlane_low");
+        scene.getMeshByName("d20_basePBR_left_low").dispose(true, true);
+        scene.getMeshByName("d20_basePBR_right_low").dispose(true, true);
         lights.dirLight.includedOnlyMeshes.push(dice.ground);
         dice.ground.position.y = -0.00001;	
         readyCheck.meshesReady = true;
@@ -47,23 +47,26 @@ var createScene = async function () {
 
     let loadTexturesAsync = async function() {
         let textures = [];
-        return new Promise((resolve, reject) = {
+        return new Promise((resolve, reject) => {
             let textureUrls = [
-                httpspatrickryanms.github.ioBabylonJStexturesDemosd20_pbrtexturesd20_steelMat_brm.png,
-                httpspatrickryanms.github.ioBabylonJStexturesDemosd20_pbrtexturesd20_blur_normal.png
+                "https://raw.githubusercontent.com/Guraaw/BabylonScene-Template/main/Textures/dice_d.png",
+                "https://raw.githubusercontent.com/Guraaw/BabylonScene-Template/main/Textures/dice_m.png",
+                "https://raw.githubusercontent.com/Guraaw/BabylonScene-Template/main/Textures/dice_r.png",
+                "https://raw.githubusercontent.com/Guraaw/BabylonScene-Template/main/Textures/dice_n.png",
+                "https://raw.githubusercontent.com/Guraaw/BabylonScene-Template/main/Textures/dice_s.png"
             ];
 
             for (let url of textureUrls) {
                 textures.push(new BABYLON.Texture(url, scene, false, false));
             }
 
-            whenAllReady(textures, () = resolve(textures));
-        }).then(() = {
+            whenAllReady(textures, () => resolve(textures));
+        }).then(() => {
             readyCheck.texturesReady = true;
         });
     };
 
-     test if a texture is loaded
+    // test if a texture is loaded
     let whenAllReady = function(textures, resolve) {
         let numRemaining = textures.length;
         if (numRemaining == 0) {
@@ -71,7 +74,7 @@ var createScene = async function () {
             return;
         }
 
-        for (let i = 0; i  textures.length; i++) {
+        for (let i = 0; i < textures.length; i++) {
             let texture = textures[i];
             if (texture.isReady()) {
                 if (--numRemaining === 0) {
@@ -82,7 +85,7 @@ var createScene = async function () {
             else {
                 let onLoadObservable = texture.onLoadObservable;
                 if (onLoadObservable) {
-                    onLoadObservable.addOnce(() = {
+                    onLoadObservable.addOnce(() => {
                         if (--numRemaining === 0) {
                             resolve();
                         }
@@ -95,9 +98,9 @@ var createScene = async function () {
     let retrieveTexture = function (meshMat, channel, textures) {
         let texture;
         for (let file of textures) {
-            let segment = file.name.split();
-            if (segment[segment.length -1].split(_)[1] === meshMat) {
-                if (segment[segment.length -1].split(_)[2] === channel + .png) {
+            let segment = file.name.split("/");
+            if (segment[segment.length -1].split("_")[1] === meshMat) {
+                if (segment[segment.length -1].split("_")[2] === channel + ".png") {
                     texture = file;
                     return texture;
                 }
@@ -108,7 +111,7 @@ var createScene = async function () {
     let retrieveLocalTexture = function (meshMat, textures) {
         let texture;
         for (let file of textures) {
-            let segment = file.name.split();
+            let segment = file.name.split("/");
             if (segment[segment.length -1] === meshMat) {
                 texture = file;
                 return texture;
@@ -123,14 +126,14 @@ var createScene = async function () {
     async function createMaterials() {
 
 
-        diceMats.d20_center = new BABYLON.NodeMaterial(d20CenterNodeMat, scene, { emitComments false });
-        await diceMats.d20_center.loadAsync(httpspatrickryanms.github.ioBabylonJStexturesDemosd20_pbrshadersd20_metalCoat.json);
+        diceMats.d20_center = new BABYLON.NodeMaterial("d20CenterNodeMat", scene, { emitComments: false });
+        await diceMats.d20_center.loadAsync("https://raw.githubusercontent.com/Guraaw/BabylonScene-Template/main/Materials/myPBRmat.json");
         diceMats.d20_center.build(false);
 
 
 
-        diceMats.ground = new BABYLON.NodeMaterial(groundNodeMat, scene, { emitComments false });
-        await diceMats.ground.loadAsync(httpspatrickryanms.github.ioBabylonJStexturesDemosd20_pbrshadersgroundShader.json);
+        diceMats.ground = new BABYLON.NodeMaterial("groundNodeMat", scene, { emitComments: false });
+        await diceMats.ground.loadAsync("https://raw.githubusercontent.com/Guraaw/BabylonScene-Template/main/Materials/groundMat.json");
         diceMats.ground.build(false);
         
         dice.d20_center.material = diceMats.d20_center;
@@ -139,30 +142,35 @@ var createScene = async function () {
         dice.ground.material = diceMats.ground;
 
 
-        diceParameters.centerNormal = diceMats.d20_center.getBlockByName(normalTex);
-        diceParameters.centerMask = diceMats.d20_center.getBlockByName(numberMaskTex);
-        diceParameters.centerBrm = diceMats.d20_center.getBlockByName(brmTex);
-        diceParameters.centerCoatNormal = diceMats.d20_center.getBlockByName(metalNormal);
-        diceParameters.centerReflection = diceMats.d20_center.getBlockByName(Reflection);
+        diceParameters.centerNormal = diceMats.d20_center.getBlockByName("NormalTex");
+        diceParameters.centerMask = diceMats.d20_center.getBlockByName("numberMaskTex");
+        diceParameters.centerDiffuse = diceMats.d20_center.getBlockByName("DiffuseTex");
+        diceParameters.centerMetallic = diceMats.d20_center.getBlockByName("MetallicTex");
+        diceParameters.centerRoughness = diceMats.d20_center.getBlockByName("RoughnessTex");
+        diceParameters.centerReflection = diceMats.d20_center.getBlockByName("Reflection");
 
 
 
-        diceParameters.groundColor = diceMats.ground.getBlockByName(groundColor);
+        diceParameters.groundColor = diceMats.ground.getBlockByName("groundColor");
         diceParameters.groundColor.value = scene.clearColor;
 
-        diceParameters.centerBrm.texture = retrieveTexture(steelMat, brm, scene.textures);
+        diceParameters.centerDiffuse.texture = retrieveLocalTexture("dice_d.png", scene.textures);
+        diceParameters.centerMask.texture = retrieveLocalTexture("dice_s.png", scene.textures);
+        diceParameters.centerMetallic.texture = retrieveLocalTexture("dice_m.png", scene.textures);
+        diceParameters.centerNormal.texture = retrieveLocalTexture("dice_n.png", scene.textures);
+        diceParameters.centerRoughness.texture = retrieveLocalTexture("dice_r.png", scene.textures);
 
 
-         dice.d20_right.onBeforeRenderObservable.add(() = {
-             diceParameters.rightFrontFace.value = 0.0;
-         });
+        // dice.d20_right.onBeforeRenderObservable.add(() => {
+        //     diceParameters.rightFrontFace.value = 0.0;
+        // });
 
-         dice.d20_right.onBetweenPassObservable.add(() = {
-             diceParameters.rightFrontFace.value = 1.0;
-             let subMesh = dice.d20_right.subMeshes[0];            
-             scene.resetCachedMaterial();
-             diceMats.d20_right.bindForSubMesh(dice.d20_right.getWorldMatrix(), dice.d20_right, subMesh);
-         });
+        // dice.d20_right.onBetweenPassObservable.add(() => {
+        //     diceParameters.rightFrontFace.value = 1.0;
+        //     let subMesh = dice.d20_right.subMeshes[0];            
+        //     scene.resetCachedMaterial();
+        //     diceMats.d20_right.bindForSubMesh(dice.d20_right.getWorldMatrix(), dice.d20_right, subMesh);
+        // });
 
         readyCheck.materialsReady = true;
     }
@@ -171,39 +179,39 @@ var createScene = async function () {
     function generateShadows() {
         shadows.shadowGenerator = new BABYLON.ShadowGenerator(512, lights.dirLight);
         shadows.shadowGenerator.useContactHardeningShadow = true;
-        shadows.shadowGenerator.contactHardeningLightSizeUVRatio = 0.07;
-        shadows.shadowGenerator.darkness = 0.65;
+        shadows.shadowGenerator.contactHardeningLightSizeUVRatio = 0.485;
+        shadows.shadowGenerator.darkness = 0.43;
         shadows.shadowGenerator.addShadowCaster(dice.d20_center);
         shadows.shadowGenerator.enableSoftTransparentShadow = true;
         shadows.shadowGenerator.transparencyShadow = true;
         dice.ground.receiveShadows = true;
-        dice.ground.material.environmentIntensity = 0.2;
+        dice.ground.material.environmentIntensity = 2;
     }
 
     const glowPass = {};
     function glowLayer() {
-        if (diceMats.d20_center.getBlockByName(glowMask) !== null) {
-            glowPass.glowMask = diceMats.d20_center.getBlockByName(glowMask);
-            glowPass.glow = new BABYLON.GlowLayer(glow, scene);
-            glowPass.glow.intensity = 0.6;
+        if (diceMats.d20_center.getBlockByName("glowMask") !== null) {
+            glowPass.glowMask = diceMats.d20_center.getBlockByName("glowMask");
+            glowPass.glow = new BABYLON.GlowLayer("glow", scene);
+            glowPass.glow.intensity = 0.35;
     
-             set up material to use glow layer
+            // set up material to use glow layer
             glowPass.glow.referenceMeshToUseItsOwnMaterial(dice.d20_center);
     
-             enable glow mask to render only emissive into glow layer, and then disable glow mask
-            glowPass.glow.onBeforeRenderMeshToEffect.add(() = {
+            // enable glow mask to render only emissive into glow layer, and then disable glow mask
+            glowPass.glow.onBeforeRenderMeshToEffect.add(() => {
                 glowPass.glowMask.value = 1.0;
             });
-            glowPass.glow.onAfterRenderMeshToEffect.add(() = {
+            glowPass.glow.onAfterRenderMeshToEffect.add(() => {
                 glowPass.glowMask.value = 0.0;
             });    
         }
     }
 
     const readyCheck = {
-        meshesReady false,
-        texturesReady false,
-        materialsReady false
+        meshesReady: false,
+        texturesReady: false,
+        materialsReady: false
     };
     function checkTrue(ready) {
         for (let value in ready) {
@@ -218,8 +226,8 @@ var createScene = async function () {
             engine.hideLoadingUI();
         }
         else {
-            console.log(looping);
-            setTimeout(() = {
+            console.log("looping");
+            setTimeout(() => {
                 readyScene();
             }, 1000);
         }
@@ -233,7 +241,7 @@ var createScene = async function () {
     generateShadows();
     glowLayer();  
     readyScene();
-    scene.debugLayer.show({embedMode true});
+    scene.debugLayer.show({embedMode: true});
 
     return scene;
 };
